@@ -24,6 +24,19 @@ class Maquina(Produccion):
     mantenimiento = BooleanField(default=False, help_text='False indica que no requiere mantenimiento')
 
 
+class MateriaPrima(Produccion):
+    verbose_name = 'Materia Prima'
+    codigo_interno = CharField(max_length=255, null=False)
+    codigo_prov = CharField(max_length=255, null=False)
+    tipo = CharField(max_length=255, null=False)
+    origen = CharField(max_length=255, null=False)
+    disponible = BooleanField(default=False)
+    proveedor = CharField(max_length=255, null=False)
+    reciclado = BooleanField(default=False)
+    ubicacion = CharField(max_length=255, null=False)
+    cantidad = IntegerField(default=0, help_text='Cargar peso en kilogramos')
+
+
 class Molde(Produccion):
     verbose_name = 'Moldes'
     numero = CharField(max_length=255, unique=True)
@@ -41,6 +54,7 @@ class Molde(Produccion):
     horas_en_produccion = IntegerField(default=0)
     ultimo_ciclo = IntegerField(null=False)
     materia_prima = CharField(max_length=255, null=False)
+    mp = ForeignKeyField(MateriaPrima, MateriaPrima.tipo, backref='materia_prima')
 
 
 class Planificacion(Produccion):
@@ -60,4 +74,5 @@ class Planificacion(Produccion):
 
 
 produccion_db.connect()
-produccion_db.create_tables([Maquina, Molde, Planificacion])
+produccion_db.create_tables([Maquina, Molde, Planificacion, MateriaPrima])
+produccion_db.close()
