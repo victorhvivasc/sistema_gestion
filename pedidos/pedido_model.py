@@ -29,12 +29,12 @@ class Producto(Produccion):
 
 class Orden(Produccion):
     """Clase para crear tabla de registro de los items solicitados por los clientes"""
-    cliente = ForeignKeyField(Cliente, field=Cliente.razon_social, backref='ordenes')  # Clientes existentes
+    cliente = ForeignKeyField(Cliente, field=Cliente.cuit, backref='ordenes')  # Clientes existentes
     creado = DateTimeField(null=False)
     actualizado = DateTimeField(default=datetime.datetime.now())
     fecha_compromiso = DateTimeField(null=False, verbose_name='Fecha')
     cantidad_compromiso = IntegerField(null=False, verbose_name='Cantidad')
-    producto = ForeignKeyField(Producto, field=Producto.codigo)  # Productos disponibles, indirectamente moldes
+    producto = ForeignKeyField(Producto, field=Producto.id, backref='ordenes')  # Productos disponibles
 
 
 produccion_db.create_tables([Cliente, Producto, Orden])

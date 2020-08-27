@@ -54,7 +54,6 @@ class Molde(Produccion):
     horas_en_produccion = IntegerField(default=0)
     ultimo_ciclo = IntegerField(null=False)
     materia_prima = CharField(max_length=255, null=False)
-    mp = ForeignKeyField(MateriaPrima, MateriaPrima.tipo, backref='materia_prima')
 
 
 class Planificacion(Produccion):
@@ -73,6 +72,19 @@ class Planificacion(Produccion):
     fecha_fin = DateTimeField(null=False, verbose_name='Fin de produccion estimado')
 
 
+class Registro(Produccion):
+    orden_numero = ForeignKeyField(Planificacion,
+                                   field=Planificacion.codigo, backref='Orden_produccion', verbose_name='Ordenes')
+    lote_numero = CharField(max_length=255, null=True, default='Pedir a Calidad', verbose_name='Lotes')
+    fecha = DateTimeField(null=False, help_text='Indicar fecha real de produccion', verbose_name='Fechas')
+    turno = CharField(max_length=255, null=False, help_text="Usar categorias inconfundibles ej. Mañana, Tarde, Noche",
+                      verbose_name='Turnos')
+    produccion = IntegerField(null=False, verbose_name='Produccion')
+    unidad = CharField(null=False, help_text='Unidad del volumen de produccion registrado', verbose_name='Unidades')
+    falla = BooleanField(default=False, help_text='Indicar si hubo parada por fallas', verbose_name='Fallas')
+    novedad = BlobField(null=False, verbose_name='Novedades')
+
+
 produccion_db.connect()
-produccion_db.create_tables([Maquina, Molde, Planificacion, MateriaPrima])
+produccion_db.create_tables([Maquina, Molde, Planificacion, MateriaPrima, Registro])
 produccion_db.close()

@@ -11,7 +11,8 @@ class Mantenimiento(Produccion):
     correctivo = BooleanField(default=True, null=False)
     planificado = BooleanField(default=False, null=False)
     en_produccion = BooleanField(default=False, null=True)
-    producto = ForeignKeyField(Molde, field=Molde.nombre, help_text='Producto que se encontraba en produccion')
+    producto = ForeignKeyField(Molde, field=Molde.numero, backref='mantenimiento',
+                               help_text='Producto que se encontraba en produccion')
     personal = IntegerField(null=False)
     repuestos = BlobField(null=False)
 
