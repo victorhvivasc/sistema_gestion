@@ -23,6 +23,10 @@ class Maquina(Produccion):
     disponible = BooleanField(default=True, verbose_name='Operativa')
     mantenimiento = BooleanField(default=False, help_text='False indica que no requiere mantenimiento')
 
+    def __str__(self, ):
+        return f"Maquina numero: {self.numero}, marca: {self.fabricante}, capacidad: {self.capacidad}, " \
+               f"¿Disponible?: {self.disponible}, ¿Requiere mantenimiento?: {self.mantenimiento}"
+
 
 class MateriaPrima(Produccion):
     verbose_name = 'Materia Prima'
@@ -35,6 +39,10 @@ class MateriaPrima(Produccion):
     reciclado = BooleanField(default=False)
     ubicacion = CharField(max_length=255, null=False)
     cantidad = IntegerField(default=0, help_text='Cargar peso en kilogramos')
+
+    def __str__(self, ):
+        return f"Objeto {self.verbose_name}, codigo interno: {self.codigo_interno}, " \
+               f"cantidad: {self.cantidad}, ¿Disponible?: {self.disponible}"
 
 
 class Molde(Produccion):
@@ -55,6 +63,10 @@ class Molde(Produccion):
     ultimo_ciclo = IntegerField(null=False)
     materia_prima = CharField(max_length=255, null=False)
 
+    def __str__(self, ):
+        return f"Nombre: {self.nombre}, " \
+               f"Codigo: {self.numero}, Materia Prima: {self.materia_prima}"
+
 
 class Planificacion(Produccion):
     verbose_name = 'Planificaciones'
@@ -70,6 +82,11 @@ class Planificacion(Produccion):
                                                               'al final de produccion')
     prioridad = IntegerField(null=False)
     fecha_fin = DateTimeField(null=False, verbose_name='Fin de produccion estimado')
+
+    def __str__(self, ):
+        return f"Objeto {self.verbose_name}, Codigo de producto: {self.molde}, Maquina: {self.maquina}," \
+               f"Mantenimiento de maquina al final de la produccion: {self.mantenimiento_maq}, " \
+               f"Mantenimiento de molde al final de la produccion: {self.mantenimiento_molde}"
 
 
 class Registro(Produccion):
@@ -87,4 +104,4 @@ class Registro(Produccion):
 
 produccion_db.connect()
 produccion_db.create_tables([Maquina, Molde, Planificacion, MateriaPrima, Registro])
-produccion_db.close()
+#produccion_db.close()

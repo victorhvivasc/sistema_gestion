@@ -37,4 +37,4 @@ class PersonalMtto(Produccion):
 
 
 produccion_db.create_tables([Mantenimiento, Repuesto, PersonalMtto])
-produccion_db.close()
+#produccion_db.close()
