@@ -101,7 +101,11 @@ class Registro(Produccion):
     falla = BooleanField(default=False, help_text='Indicar si hubo parada por fallas', verbose_name='Fallas')
     novedad = BlobField(null=False, verbose_name='Novedades')
 
+    def __str__(self, ):
+        return f"Para la orden # {self.orden_numero.id}, de cliente: {self.orden_numero.cliente.razon_social}," \
+               f" se produjeron {self.produccion} {self.unidad}s el dia {self.falla}, en el turno: {self.turno}"
+
 
 produccion_db.connect()
 produccion_db.create_tables([Maquina, Molde, Planificacion, MateriaPrima, Registro])
-#produccion_db.close()
+produccion_db.close()

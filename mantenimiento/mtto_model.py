@@ -16,6 +16,12 @@ class Mantenimiento(Produccion):
     personal = IntegerField(null=False)
     repuestos = BlobField(null=False)
 
+    def __str__(self, ):
+        return f"Maquina #: {self.maquina}, tiene/tuvo mantenimiento desde {self.fecha_i} hasta {self.fecha_f};" \
+               f"¿Correctivo? {self.correctivo}, ¿Planificado? {self.planificado}, ¿Estaba en producción el equipo?" \
+               f"{self.en_produccion}, ¿con que producto? {self.producto}, ¿Quien se encarga de la actividad? " \
+               f"{self.personal}, ¿Que repuestos estan implicados en el mantenimiento? {self.repuestos}"
+
 
 class Repuesto(Produccion):
     codigo_interno = CharField(max_length=255, null=False)
@@ -27,6 +33,10 @@ class Repuesto(Produccion):
     fecha_ingreso = DateTimeField(null=False)
     proveedor = CharField(null=False, help_text='Recomiendo usar numero de identificacion')
 
+    def __str__(self, ):
+        return f"Repuesto: {self.descripcion}, modelo: {self.codigo_fabrica}, registrado con # " \
+               f"{self.codigo_interno}, cantidad: {self.cantidad}, maquina asignada a la compra: {self.maquina}"
+
 
 class PersonalMtto(Produccion):
     legajo = CharField(max_length=255, null=False, verbose_name='codigo_empleado')
@@ -35,6 +45,9 @@ class PersonalMtto(Produccion):
     ano_ingreso = IntegerField(null=False)
     anos_experiencia = IntegerField(null=False)
 
+    def __str__(self, ):
+        return f"Empleado # {self.legajo}, Nombre: {self.nombre}, Especialidad: {self.especialidad}"
+
 
 produccion_db.create_tables([Mantenimiento, Repuesto, PersonalMtto])
-#produccion_db.close()
+produccion_db.close()

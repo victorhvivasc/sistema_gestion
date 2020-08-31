@@ -17,8 +17,6 @@ def maquina_nueva(numero=None, ):
     m_n.save()
 
 
-c = Maquina.select()
-d = Planificacion.select()
 e = Orden.select()
 for x in e:
     print(x)

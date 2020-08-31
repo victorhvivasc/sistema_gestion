@@ -26,6 +26,9 @@ class Producto(Produccion):
     costo_produccion = IntegerField(default='no disponible', null=False)
     precio_venta = IntegerField(default='no disponible', verbose_name='Precio de Venta')
 
+    def __str__(self, ):
+        return f"Producto: {self.nombre}, Codigo #: {self.codigo}, Color: {self.color}"
+
 
 class Orden(Produccion):
     """Clase para crear tabla de registro de los items solicitados por los clientes"""
@@ -35,6 +38,11 @@ class Orden(Produccion):
     fecha_compromiso = DateTimeField(null=False, verbose_name='Fecha')
     cantidad_compromiso = IntegerField(null=False, verbose_name='Cantidad')
     producto = ForeignKeyField(Producto, field=Producto.id, backref='ordenes')  # Productos disponibles
+
+    def __str__(self, ):
+        return f"Cliente: {self.cliente.cuit}, Nombre: {self.cliente.razon_social}, Producto: {self.producto.nombre}" \
+               f", Numero de molde: {self.producto.codigo.numero}, " \
+               f"Cantidad pedida: {self.cantidad_compromiso}"
 
 
 produccion_db.create_tables([Cliente, Producto, Orden])
