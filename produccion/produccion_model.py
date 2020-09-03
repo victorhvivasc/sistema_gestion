@@ -2,7 +2,7 @@
 # modelo para hacer seguimiento del avance de la produccion
 from peewee import *
 
-produccion_db = SqliteDatabase('../produccion.db')
+produccion_db = SqliteDatabase('./produccion.db')
 
 
 class Produccion(Model):
@@ -23,9 +23,9 @@ class Maquina(Produccion):
     disponible = BooleanField(default=True, verbose_name='Operativa')
     mantenimiento = BooleanField(default=False, help_text='False indica que no requiere mantenimiento')
 
-    def __str__(self, ):
-        return f"Maquina numero: {self.numero}, marca: {self.fabricante}, capacidad: {self.capacidad}, " \
-               f"¿Disponible?: {self.disponible}, ¿Requiere mantenimiento?: {self.mantenimiento}"
+    #def __str__(self, ):
+    #    return f"Maquina numero: {self.numero}, marca: {self.fabricante}, capacidad: {self.capacidad}, " \
+    #           f"¿Disponible?: {self.disponible}, ¿Requiere mantenimiento?: {self.mantenimiento}"
 
 
 class MateriaPrima(Produccion):
@@ -38,7 +38,7 @@ class MateriaPrima(Produccion):
     proveedor = CharField(max_length=255, null=False)
     reciclado = BooleanField(default=False)
     ubicacion = CharField(max_length=255, null=False)
-    cantidad = IntegerField(default=0, help_text='Cargar peso en kilogramos')
+    cantidad = FloatField(default=0, help_text='Cargar peso en kilogramos')
 
     def __str__(self, ):
         return f"Objeto {self.verbose_name}, codigo interno: {self.codigo_interno}, " \
@@ -56,21 +56,37 @@ class Molde(Produccion):
     colada_caliente = BooleanField(default=True)
     n_cavidades = IntegerField(null=False)
     cavidades_disponibles = IntegerField(null=False)
-    alto = IntegerField(null=False)
-    ancho = IntegerField(null=False)
-    profundo = IntegerField(null=False)
+    alto = FloatField(null=False)
+    ancho = FloatField(null=False)
+    profundo = FloatField(null=False)
     horas_en_produccion = IntegerField(default=0)
-    ultimo_ciclo = IntegerField(null=False)
+    ultimo_ciclo = FloatField(null=False)
     materia_prima = CharField(max_length=255, null=False)
+    peso_molde = IntegerField(null=False, help_text='Peso en Kilogramos')
+    peso_pieza = IntegerField(null=False, help_text='Peso en gramos')
 
     def __str__(self, ):
         return f"Nombre: {self.nombre}, " \
                f"Codigo: {self.numero}, Materia Prima: {self.materia_prima}"
 
 
+class Periferico(Produccion):
+    verbose_name = 'Perifericos'
+    codigo = CharField(max_length=255, unique=True)
+    nombre = CharField(max_length=255, null=False)
+    modelo = CharField(max_length=255, null=False)
+    marca = CharField(max_length=255, null=False)
+    operativo = BooleanField(default=True)
+    mantenimiento = BooleanField(default=False, help_text='True indica que requiere mantenimiento')
+
+    def __str__(self, ):
+        return f"Periferico: {self.codigo}, {self.nombre}, {self.marca}.  ¿Esta operativo?: {self.operativo}"
+
+
 class Planificacion(Produccion):
     verbose_name = 'Planificaciones'
     codigo = AutoField(verbose_name='Orden de Produccion')
+    prioridad = IntegerField(null=False)
     fecha_montaje = DateTimeField(null=False, verbose_name='Cambio de molde')
     fecha_inicio = DateTimeField(null=False, verbose_name='Arranque de produccion')
     piezas = IntegerField(null=False)
@@ -80,13 +96,23 @@ class Planificacion(Produccion):
     maquina = ForeignKeyField(Maquina, field=Maquina.numero, backref='Planificaciones', verbose_name='Maquina')
     mantenimiento_maq = BooleanField(default=False, help_text='True indica que va a mantenimiento '
                                                               'al final de produccion')
-    prioridad = IntegerField(null=False)
+    material1 = CharField(default='No indicado', max_length=255, null=False)
+    material2 = CharField(default='No indicado', max_length=255, null=False)
+    material3 = CharField(default='No indicado', max_length=255, null=False)
+    pm1 = FloatField(default='No indicado', null=False)
+    pm2 = FloatField(default='No indicado', null=False)
+    pm3 = FloatField(default='No indicado', null=False)
+    color = CharField(default='No indicado', max_length=255, null=False)
+    porc_color = FloatField(default='No indicado', null=False)
     fecha_fin = DateTimeField(null=False, verbose_name='Fin de produccion estimado')
 
     def __str__(self, ):
+
         return f"Objeto {self.verbose_name}, Codigo de producto: {self.molde}, Maquina: {self.maquina}," \
                f"Mantenimiento de maquina al final de la produccion: {self.mantenimiento_maq}, " \
-               f"Mantenimiento de molde al final de la produccion: {self.mantenimiento_molde}"
+               f"Mantenimiento de molde al final de la produccion: {self.mantenimiento_molde}, Material: " \
+               f"{self.material1}+{self.material2}+{self.material3}, color: {self.color}, porcentajes: " \
+               f"{self.pm1}+{self.pm2}+{self.pm3} correspondientemente, porcentaje color: {self.porc_color}"
 
 
 class Registro(Produccion):
@@ -98,6 +124,9 @@ class Registro(Produccion):
                       verbose_name='Turnos')
     produccion = IntegerField(null=False, verbose_name='Produccion')
     unidad = CharField(null=False, help_text='Unidad del volumen de produccion registrado', verbose_name='Unidades')
+    malas = FloatField(null=False, help_text='Kilogramos de Piezas que fueron descartados')
+    molido = BooleanField(default=False, null=False)
+    porcentaje_molido = IntegerField(default=0, help_text='Porcentaje de molinda utilizado')
     falla = BooleanField(default=False, help_text='Indicar si hubo parada por fallas', verbose_name='Fallas')
     novedad = BlobField(null=False, verbose_name='Novedades')
 
@@ -107,5 +136,5 @@ class Registro(Produccion):
 
 
 produccion_db.connect()
-produccion_db.create_tables([Maquina, Molde, Planificacion, MateriaPrima, Registro])
+produccion_db.create_tables([Maquina, Molde, Planificacion, MateriaPrima, Registro, Periferico])
 produccion_db.close()

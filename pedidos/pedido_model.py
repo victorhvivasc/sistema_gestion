@@ -41,7 +41,7 @@ class Orden(Produccion):
 
     def __str__(self, ):
         return f"Cliente: {self.cliente.cuit}, Nombre: {self.cliente.razon_social}, Producto: {self.producto.nombre}" \
-               f", Numero de molde: {self.producto.codigo.numero}, " \
+               f" {self.producto.color}, Numero de molde: {self.producto.codigo.numero}, " \
                f"Cantidad pedida: {self.cantidad_compromiso}"
 
 
